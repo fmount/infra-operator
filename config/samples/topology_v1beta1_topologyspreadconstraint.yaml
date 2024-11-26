@@ -1,0 +1,12 @@
+apiVersion: topology.openstack.org/v1beta1
+kind: TopologySpreadConstraint
+metadata:
+  labels:
+    app.kubernetes.io/name: topologyspreadconstraint
+    app.kubernetes.io/instance: topologyspreadconstraint-sample
+    app.kubernetes.io/part-of: infra-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: infra-operator
+  name: topologyspreadconstraint-sample
+spec:
+  # TODO(user): Add fields here
