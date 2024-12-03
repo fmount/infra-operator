@@ -42,16 +42,19 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 
 	k8s_networkv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
+
 	instancehav1 "github.com/openstack-k8s-operators/infra-operator/apis/instanceha/v1beta1"
 	memcachedv1 "github.com/openstack-k8s-operators/infra-operator/apis/memcached/v1beta1"
 	networkv1 "github.com/openstack-k8s-operators/infra-operator/apis/network/v1beta1"
 	rabbitmqv1beta1 "github.com/openstack-k8s-operators/infra-operator/apis/rabbitmq/v1beta1"
 	redisv1 "github.com/openstack-k8s-operators/infra-operator/apis/redis/v1beta1"
+	topologyv1beta1 "github.com/openstack-k8s-operators/infra-operator/apis/topology/v1beta1"
 	instancehacontrollers "github.com/openstack-k8s-operators/infra-operator/controllers/instanceha"
 	memcachedcontrollers "github.com/openstack-k8s-operators/infra-operator/controllers/memcached"
 	networkcontrollers "github.com/openstack-k8s-operators/infra-operator/controllers/network"
 	rabbitmqcontrollers "github.com/openstack-k8s-operators/infra-operator/controllers/rabbitmq"
 	rediscontrollers "github.com/openstack-k8s-operators/infra-operator/controllers/redis"
+	topologycontrollers "github.com/openstack-k8s-operators/infra-operator/controllers/topology"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -70,6 +73,7 @@ func init() {
 	utilruntime.Must(redisv1.AddToScheme(scheme))
 	utilruntime.Must(networkv1.AddToScheme(scheme))
 	utilruntime.Must(k8s_networkv1.AddToScheme(scheme))
+	utilruntime.Must(topologyv1beta1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -206,6 +210,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "IPSet")
 		os.Exit(1)
 	}
+	if err = (&topologycontrollers.TopologyReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Topology")
+		os.Exit(1)
+	}
 
 	// Acquire environmental defaults and initialize operator defaults with them
 	memcachedv1.SetupDefaults()
@@ -247,6 +258,13 @@ func main() {
 		checker = mgr.GetWebhookServer().StartedChecker()
 	}
 
+	if err = (&topologycontrollers.TopologyReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Topology")
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", checker); err != nil {

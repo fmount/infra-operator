@@ -394,3 +394,30 @@ rules:
   - securitycontextconstraints
   verbs:
   - use
+- apiGroups:
+  - topology.openstack.org
+  resources:
+  - topologies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - topology.openstack.org
+  resources:
+  - topologies/finalizers
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - topology.openstack.org
+  resources:
+  - topologies/status
+  verbs:
+  - get
+  - patch
+  - update
