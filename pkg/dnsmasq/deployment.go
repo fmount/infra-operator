@@ -172,6 +172,7 @@ func Deployment(
 			ServiceName,
 		},
 		corev1.LabelHostname,
+		nil,
 	)
 	if instance.Spec.NodeSelector != nil {
 		deployment.Spec.Template.Spec.NodeSelector = *instance.Spec.NodeSelector
