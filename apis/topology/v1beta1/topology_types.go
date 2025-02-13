@@ -211,3 +211,20 @@ func EnsureDeletedTopologyRef(
 	}
 	return ctrl.Result{}, nil
 }
+
+// Given a StatefulSet/Deployment/DaemonSet PodTemplateSpec, apply the referenced
+// topology
+func (t Topology) ApplyTo(
+	pod *corev1.PodTemplateSpec,
+) {
+	// Get the Topology .Spec
+	ts := t.Spec
+	// Process TopologySpreadConstraints if defined in the referenced Topology
+	if ts.TopologySpreadConstraints != nil {
+		pod.Spec.TopologySpreadConstraints = *t.Spec.TopologySpreadConstraints
+	}
+	// Process Affinity if defined in the referenced Topology
+	if ts.Affinity != nil {
+		pod.Spec.Affinity = ts.Affinity
+	}
+}
