@@ -40,3 +40,4 @@ go.work.sum
 
 # python virtual environment
 .venv
+config/manager/kustomization.yaml
